@@ -121,8 +121,9 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 	{
 		HostButton->SetVisibility(ESlateVisibility::Visible);
 		JoinButton->SetVisibility(ESlateVisibility::Visible);
+		ValidateButton->SetIsEnabled(true);
 		ValidateButton->SetVisibility(ESlateVisibility::Hidden);
-		CodePromptBox->SetVisibility(ESlateVisibility::Hidden);
+		CodePromptBox->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
@@ -178,7 +179,7 @@ void UMenu::ValidateButtonClicked()
 		else 
 		{
 			SessionToken = PromptSessionToken;
-			MultiplayerSessionsSubsystem->FindSessions(1000, PromptSessionToken);
+			MultiplayerSessionsSubsystem->FindSessions(100, PromptSessionToken);
 		}
 	}
 }
