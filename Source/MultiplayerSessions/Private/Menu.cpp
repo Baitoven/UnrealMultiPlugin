@@ -4,12 +4,13 @@
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "JoinList.h"
 
-void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
+void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString LobbyPath, FString JoinListPath)
 {
 	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
+	PathToJoinList = JoinListPath;
 	NumPublicConnections = NumberOfPublicConnections;
-	MatchType = TypeOfMatch;
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	bIsFocusable = true;
@@ -37,8 +38,6 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 	if (MultiplayerSessionsSubsystem)
 	{
 		MultiplayerSessionsSubsystem->MultiplayerOnCreateSessionComplete.AddDynamic(this, &ThisClass::OnCreateSession);
-		MultiplayerSessionsSubsystem->MultiplayerOnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSessions);
-		MultiplayerSessionsSubsystem->MultiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::OnJoinSession);
 		MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
 		MultiplayerSessionsSubsystem->MultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 	}
@@ -58,10 +57,6 @@ bool UMenu::Initialize()
 	if (JoinButton)
 	{
 		JoinButton->OnClicked.AddDynamic(this, &ThisClass::JoinButtonClicked);
-	}
-	if (ValidateButton)
-	{
-		ValidateButton->OnClicked.AddDynamic(this, &ThisClass::ValidateButtonClicked);
 	}
 
 	return true;
@@ -98,55 +93,6 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 	}
 }
 
-void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
-{
-	if (MultiplayerSessionsSubsystem == nullptr)
-	{
-		return;
-	}
-
-	for (auto Result : SessionResults)
-	{
-		FString SettingsValue;
-		FString SessionCodeValue;
-		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
-		Result.Session.SessionSettings.Get(FName("SessionToken"), SessionCodeValue);
-		if (SettingsValue == MatchType && SessionCodeValue == SessionToken)
-		{
-			MultiplayerSessionsSubsystem->JoinSession(Result);
-			return;
-		}
-	}
-	if (!bWasSuccessful || SessionResults.Num() == 0)
-	{
-		HostButton->SetVisibility(ESlateVisibility::Visible);
-		JoinButton->SetVisibility(ESlateVisibility::Visible);
-		ValidateButton->SetIsEnabled(true);
-		ValidateButton->SetVisibility(ESlateVisibility::Hidden);
-		CodePromptBox->SetVisibility(ESlateVisibility::Visible);
-	}
-}
-
-void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
-{
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	if (Subsystem)
-	{
-		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
-		if (SessionInterface.IsValid())
-		{
-			FString Address;
-			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
-
-			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
-			if (PlayerController)
-			{
-				PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
-			}
-		}
-	}
-}
-
 void UMenu::OnDestroySession(bool bWasSuccessful)
 {
 }
@@ -158,38 +104,18 @@ void UMenu::OnStartSession(bool bWasSuccessful)
 void UMenu::HostButtonClicked()
 {
 	bIsHosting = true;
-	EnableCodePrompt();
+	MultiplayerSessionsSubsystem->CreateSession(NumPublicConnections, "");
 }
 
 void UMenu::JoinButtonClicked()
 {
 	bIsHosting = false;
-	EnableCodePrompt();
-}
-
-void UMenu::ValidateButtonClicked()
-{
-	ValidateButton->SetIsEnabled(false);
-	FString PromptSessionToken = CodePromptBox->GetText().ToString();
-	if (MultiplayerSessionsSubsystem) 
+	UWorld* World = GetWorld();
+	if (World) 
 	{
-		if (bIsHosting) {
-			MultiplayerSessionsSubsystem->CreateSession(NumPublicConnections, MatchType, PromptSessionToken);
-		}
-		else 
-		{
-			SessionToken = PromptSessionToken;
-			MultiplayerSessionsSubsystem->FindSessions(100, PromptSessionToken);
-		}
+		World->SeamlessTravel(PathToJoinList);
+		RemoveFromParent();
 	}
-}
-
-void UMenu::EnableCodePrompt()
-{
-	HostButton->SetVisibility(ESlateVisibility::Hidden);
-	JoinButton->SetVisibility(ESlateVisibility::Hidden);
-	ValidateButton->SetVisibility(ESlateVisibility::Visible);
-	CodePromptBox->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMenu::MenuTearDown()

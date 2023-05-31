@@ -1,21 +1,19 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/EditableTextBox.h"
-#include "Components/ScrollBox.h"
+#include "Components/ListView.h"
 #include "Blueprint/UserWidget.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "Menu.generated.h"
+#include "JoinList.generated.h"
 
 UCLASS()
-class MULTIPLAYERSESSIONS_API UMenu : public UUserWidget
+class MULTIPLAYERSESSIONS_API UJoinList : public UUserWidget
 {
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void MenuSetup(int32 NumberOfPublicConnections = 4, FString LobbyPath = FString(TEXT("/Game/Maps/Lobby")), FString JoinListPath = FString(TEXT("/Game/Maps/JoinList")));
+	void JoinListSetup(UObject ListEntryWidget, FString LobbyPath = FString(TEXT("/Game/Maps/Lobby")));
 
 protected:
 
@@ -25,8 +23,8 @@ protected:
 	//
 	// Callbacks for the custom delegates on the MultiplayerSessionsSubsystem
 	//
-	UFUNCTION()
-	void OnCreateSession(bool bWasSuccessful);
+	void OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful);
+	void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);
 	UFUNCTION()
@@ -35,26 +33,27 @@ protected:
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* HostButton;
+	class UButton* ValidateButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* JoinButton;
+	UEditableTextBox* CodePromptBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UListView* ServerList;
 
 	UFUNCTION()
-	void HostButtonClicked();
-
-	UFUNCTION()
-	void JoinButtonClicked();
+	void ValidateButtonClicked();
 
 	void MenuTearDown();
+
+	void PopulatePanel();
 
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
-	int32 NumPublicConnections{4};
 	FString SessionToken;
-	FString PathToLobby{TEXT("")};
-	FString PathToJoinList{ TEXT("") };
+	FString PathToLobby{ TEXT("") };
+	TSharedPtr<UObject> ListEntry;
 
 	bool bIsHosting;
 };
