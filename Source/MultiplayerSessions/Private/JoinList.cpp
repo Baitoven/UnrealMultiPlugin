@@ -6,10 +6,9 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 
-void UJoinList::JoinListSetup(UObject ListEntryWidget, FString LobbyPath)
+void UJoinList::JoinListSetup(FString LobbyPath)
 {
 	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
-	ListEntry = MakeShareable<UObject>(&ListEntryWidget);
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	bIsFocusable = true;
@@ -56,15 +55,16 @@ bool UJoinList::Initialize()
 	// TEST
 	if (ServerList) 
 	{
-		PopulatePanel();
+		//AddEntry();
 	}
 
 	return true;
 }
 
-void UJoinList::PopulatePanel() 
+void UJoinList::AddEntry(FString SessionToken) 
 {
-	ServerList->AddItem(ListEntry);
+	UJoinListEntry Entry(SessionToken);
+	ServerList->AddItem(&Entry);
 }
 
 void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)

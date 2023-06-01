@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "JoinListEntry.h"
 #include "Components/EditableTextBox.h"
 #include "Components/ListView.h"
 #include "Blueprint/UserWidget.h"
@@ -13,7 +14,7 @@ class MULTIPLAYERSESSIONS_API UJoinList : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void JoinListSetup(UObject ListEntryWidget, FString LobbyPath = FString(TEXT("/Game/Maps/Lobby")));
+	void JoinListSetup(FString LobbyPath = FString(TEXT("/Game/Maps/Lobby")));
 
 protected:
 
@@ -46,14 +47,13 @@ private:
 
 	void MenuTearDown();
 
-	void PopulatePanel();
+	void AddEntry(FString SessionToken);
 
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
 	FString SessionToken;
 	FString PathToLobby{ TEXT("") };
-	TSharedPtr<UObject> ListEntry;
 
 	bool bIsHosting;
 };
