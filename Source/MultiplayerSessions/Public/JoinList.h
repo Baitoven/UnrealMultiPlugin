@@ -37,6 +37,9 @@ private:
 	class UButton* ValidateButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UButton* SearchButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* CodePromptBox;
 
 	UPROPERTY(meta = (BindWidget))
@@ -45,9 +48,12 @@ private:
 	UFUNCTION()
 	void ValidateButtonClicked();
 
+	UFUNCTION()
+	void SearchButtonClicked();
+
 	void MenuTearDown();
 
-	void AddEntry(FString SessionToken);
+	void AddEntry(FOnlineSessionSearchResult Session);
 
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;

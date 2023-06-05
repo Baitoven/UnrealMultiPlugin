@@ -51,20 +51,19 @@ bool UJoinList::Initialize()
 	{
 		ValidateButton->OnClicked.AddDynamic(this, &ThisClass::ValidateButtonClicked);
 	}
-	// TODO: Add button events
-	// TEST
-	if (ServerList) 
+	if (SearchButton) 
 	{
-		//AddEntry();
+		SearchButton->OnClicked.AddDynamic(this, &ThisClass::SearchButtonClicked);
 	}
 
 	return true;
 }
 
-void UJoinList::AddEntry(FString SessionToken) 
+void UJoinList::AddEntry(FOnlineSessionSearchResult Session) 
 {
-	UJoinListEntry Entry(SessionToken);
-	ServerList->AddItem(&Entry);
+	UJoinListEntry* Entry = NewObject<UJoinListEntry>(this);
+	Entry->SetSession(Session);
+	ServerList->AddItem(Entry);
 }
 
 void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
@@ -74,15 +73,16 @@ void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& Session
 		return;
 	}
 
-	for (auto Result : SessionResults)
+	if (ServerList) 
 	{
-		FString SessionCodeValue;
-		Result.Session.SessionSettings.Get(FName("SessionToken"), SessionCodeValue);
-		if (SessionCodeValue == SessionToken)
-		{
-			MultiplayerSessionsSubsystem->JoinSession(Result);
-			return;
-		}
+		// TODO Fix this
+		AddEntry(FOnlineSessionSearchResult());
+		AddEntry(FOnlineSessionSearchResult());
+	}
+
+	for (FOnlineSessionSearchResult Result : SessionResults)
+	{
+		AddEntry(Result);
 	}
 	if (!bWasSuccessful || SessionResults.Num() == 0)
 	{
@@ -121,6 +121,11 @@ void UJoinList::OnStartSession(bool bWasSuccessful)
 }
 
 void UJoinList::ValidateButtonClicked()
+{
+	
+}
+
+void UJoinList::SearchButtonClicked()
 {
 	ValidateButton->SetIsEnabled(false);
 	FString PromptSessionToken = CodePromptBox->GetText().ToString();
