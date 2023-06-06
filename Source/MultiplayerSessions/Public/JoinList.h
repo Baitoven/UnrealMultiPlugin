@@ -16,6 +16,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinListSetup(FString LobbyPath = FString(TEXT("/Game/Maps/Lobby")));
 
+	TArray<UJoinListEntry> DisplayedSessions{};
+
 protected:
 
 	virtual bool Initialize() override;
@@ -53,13 +55,13 @@ private:
 
 	void MenuTearDown();
 
-	void AddEntry(FOnlineSessionSearchResult Session);
+	void AddEntry();
 
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
-	FString SessionToken;
 	FString PathToLobby{ TEXT("") };
-
 	bool bIsHosting;
+
+	TMap<FString, FOnlineSessionSearchResult> Sessions{};
 };

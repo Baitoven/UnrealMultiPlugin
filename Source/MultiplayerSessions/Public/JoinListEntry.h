@@ -12,12 +12,17 @@ class MULTIPLAYERSESSIONS_API UJoinListEntry : public UUserWidget, public IUserO
 {
 	GENERATED_BODY()
 public:
-	void SetSession(FOnlineSessionSearchResult vSession);
+	void SetSession(FString vSessionToken);
+
+	/*UFUNCTION(BlueprintImplementableEvent)
+	void SetSessionEvent();*/
+
+	UPROPERTY(BlueprintReadOnly)
+	FString SessionToken { TEXT("") };
 
 protected:
 
 	virtual bool Initialize() override;
-	virtual void PostInitProperties() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -31,9 +36,4 @@ private:
 
 	UFUNCTION()
 	FText SetSessionText();
-
-	FString SessionToken;
-	FOnlineSessionSearchResult Session;
-
-	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 };

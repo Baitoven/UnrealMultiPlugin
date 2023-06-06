@@ -2,10 +2,9 @@
 #include "OnlineSessionSettings.h"
 #include "MultiplayerSessionsSubsystem.h"
 
-void UJoinListEntry::SetSession(FOnlineSessionSearchResult vSession)
+void UJoinListEntry::SetSession(FString vSessionToken)
 {
-	vSession.Session.SessionSettings.Get(FName("SessionToken"), SessionToken);
-	Session = vSession;
+	SessionToken = vSessionToken;
 }
 
 bool UJoinListEntry::Initialize()
@@ -26,16 +25,14 @@ bool UJoinListEntry::Initialize()
 	return true;
 }
 
-void UJoinListEntry::PostInitProperties()
+FText UJoinListEntry::SetSessionText()
 {
-	Super::PostInitProperties();
-	SessionToken = "Prout"; // TODO: Set Session Token right here
-	SetSessionText();
+	return FText::FromString(SessionToken);
 }
 
 void UJoinListEntry::JoinButtonClicked()
 {
-	UGameInstance* GameInstance = GetGameInstance();
+	/*UGameInstance* GameInstance = GetGameInstance();
 	if (GameInstance)
 	{
 		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
@@ -43,10 +40,5 @@ void UJoinListEntry::JoinButtonClicked()
 
 	if (MultiplayerSessionsSubsystem) {
 		MultiplayerSessionsSubsystem->JoinSession(Session);
-	}
-}
-
-FText UJoinListEntry::SetSessionText()
-{
-	return FText::FromString(SessionToken);
+	}*/
 }
