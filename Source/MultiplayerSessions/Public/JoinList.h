@@ -18,6 +18,9 @@ public:
 
 	TArray<UJoinListEntry> DisplayedSessions{};
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetSessionEvent(const FString& Entry);
+
 protected:
 
 	virtual bool Initialize() override;
@@ -44,8 +47,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* CodePromptBox;
 
-	UPROPERTY(meta = (BindWidget))
-	UListView* ServerList;
+	/*UPROPERTY(meta = (BindWidget))
+	UListView* ServerList;*/
 
 	UFUNCTION()
 	void ValidateButtonClicked();

@@ -62,7 +62,7 @@ bool UJoinList::Initialize()
 void UJoinList::AddEntry() 
 {
 	UJoinListEntry* Entry = CreateWidget<UJoinListEntry>(this);;
-	ServerList->AddItem(Entry);
+	//ServerList->AddItem(Entry);
 }
 
 void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
@@ -73,7 +73,7 @@ void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& Session
 	}
 
 	Sessions = {};
-	ServerList->ClearListItems();
+	//ServerList->ClearListItems();
 	
 	// FOR TEST PURPOSES
 	AddEntry();
@@ -90,9 +90,9 @@ void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& Session
 	int i = 0;
 	for (auto Session : Sessions) 
 	{
-		UJoinListEntry* Entry = Cast<UJoinListEntry>(ServerList->GetItemAt(i));
+		/*UJoinListEntry* Entry = Cast<UJoinListEntry>(ServerList->GetItemAt(i));
 		Entry->SetSession(Session.Key);
-		i++;
+		i++;*/
 	}
 	if (!bWasSuccessful || SessionResults.Num() == 0)
 	{

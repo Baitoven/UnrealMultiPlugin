@@ -13,10 +13,10 @@ bool UJoinListEntry::Initialize()
 	{
 		return false;
 	}
-	if (SessionTokenText)
+	/*if (SessionTokenText)
 	{
 		SessionTokenText->TextDelegate.BindUFunction(this, "SetSessionText");
-	}
+	}*/
 	if (JoinButton) 
 	{
 		JoinButton->OnClicked.AddDynamic(this, &ThisClass::JoinButtonClicked);

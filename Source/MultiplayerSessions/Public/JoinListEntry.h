@@ -14,9 +14,6 @@ class MULTIPLAYERSESSIONS_API UJoinListEntry : public UUserWidget, public IUserO
 public:
 	void SetSession(FString vSessionToken);
 
-	/*UFUNCTION(BlueprintImplementableEvent)
-	void SetSessionEvent();*/
-
 	UPROPERTY(BlueprintReadOnly)
 	FString SessionToken { TEXT("") };
 
@@ -28,8 +25,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* JoinButton;
 	
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* SessionTokenText;
+	/*UPROPERTY(meta = (BindWidget))
+	UTextBlock* SessionTokenText;*/
 
 	UFUNCTION()
 	void JoinButtonClicked();
