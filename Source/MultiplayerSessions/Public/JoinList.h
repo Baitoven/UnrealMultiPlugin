@@ -16,7 +16,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinListSetup(FString LobbyPath = FString(TEXT("/Game/Maps/Lobby")));
 
-	TArray<UJoinListEntry> DisplayedSessions{};
+	UFUNCTION(BlueprintCallable)
+	void OnJoinClicked(FString SessionToken);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetSessionEvent(const FString& Entry);
@@ -47,9 +48,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* CodePromptBox;
 
-	/*UPROPERTY(meta = (BindWidget))
-	UListView* ServerList;*/
-
 	UFUNCTION()
 	void ValidateButtonClicked();
 
@@ -57,8 +55,6 @@ private:
 	void SearchButtonClicked();
 
 	void MenuTearDown();
-
-	void AddEntry();
 
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;

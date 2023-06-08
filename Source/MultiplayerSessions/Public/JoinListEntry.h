@@ -11,12 +11,6 @@ UCLASS()
 class MULTIPLAYERSESSIONS_API UJoinListEntry : public UUserWidget, public IUserObjectListEntry 
 {
 	GENERATED_BODY()
-public:
-	void SetSession(FString vSessionToken);
-
-	UPROPERTY(BlueprintReadOnly)
-	FString SessionToken { TEXT("") };
-
 protected:
 
 	virtual bool Initialize() override;
@@ -24,13 +18,7 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* JoinButton;
-	
-	/*UPROPERTY(meta = (BindWidget))
-	UTextBlock* SessionTokenText;*/
 
 	UFUNCTION()
 	void JoinButtonClicked();
-
-	UFUNCTION()
-	FText SetSessionText();
 };

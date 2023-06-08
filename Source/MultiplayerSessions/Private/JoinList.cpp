@@ -40,6 +40,12 @@ void UJoinList::JoinListSetup(FString LobbyPath)
 	}
 }
 
+void UJoinList::OnJoinClicked(FString SessionToken)
+{
+	// TODO
+
+}
+
 bool UJoinList::Initialize() 
 {
 	if (!Super::Initialize()) 
@@ -59,12 +65,6 @@ bool UJoinList::Initialize()
 	return true;
 }
 
-void UJoinList::AddEntry() 
-{
-	UJoinListEntry* Entry = CreateWidget<UJoinListEntry>(this);;
-	//ServerList->AddItem(Entry);
-}
-
 void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
 {
 	if (MultiplayerSessionsSubsystem == nullptr)
@@ -74,25 +74,13 @@ void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& Session
 
 	Sessions = {};
 	//ServerList->ClearListItems();
-	
-	// FOR TEST PURPOSES
-	AddEntry();
-	AddEntry();
-	Sessions.Add("AAA", FOnlineSessionSearchResult());
-	Sessions.Add("AAB", FOnlineSessionSearchResult());
+
 	for (FOnlineSessionSearchResult Result : SessionResults)
 	{
 		FString SessionToken;
 		Result.Session.SessionSettings.Get(FName("SessionToken"), SessionToken);
 		Sessions.Add(SessionToken, Result);
-		AddEntry();
-	}
-	int i = 0;
-	for (auto Session : Sessions) 
-	{
-		/*UJoinListEntry* Entry = Cast<UJoinListEntry>(ServerList->GetItemAt(i));
-		Entry->SetSession(Session.Key);
-		i++;*/
+		SetSessionEvent(SessionToken);
 	}
 	if (!bWasSuccessful || SessionResults.Num() == 0)
 	{
