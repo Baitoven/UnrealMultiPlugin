@@ -40,16 +40,10 @@ protected:
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* ValidateButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* SearchButton;
+	class UButton* SearchButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* CodePromptBox;
-
-	UFUNCTION()
-	void ValidateButtonClicked();
 
 	UFUNCTION()
 	void SearchButtonClicked();

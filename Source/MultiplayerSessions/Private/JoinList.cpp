@@ -42,8 +42,8 @@ void UJoinList::JoinListSetup(FString LobbyPath)
 
 void UJoinList::OnJoinClicked(FString SessionToken)
 {
-	// TODO
-
+	FOnlineSessionSearchResult* Result = Sessions.Find(SessionToken);
+	MultiplayerSessionsSubsystem->JoinSession(*Result);
 }
 
 bool UJoinList::Initialize() 
@@ -51,11 +51,6 @@ bool UJoinList::Initialize()
 	if (!Super::Initialize()) 
 	{
 		return false;
-	}
-
-	if (ValidateButton)
-	{
-		ValidateButton->OnClicked.AddDynamic(this, &ThisClass::ValidateButtonClicked);
 	}
 	if (SearchButton) 
 	{
@@ -73,8 +68,6 @@ void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& Session
 	}
 
 	Sessions = {};
-	//ServerList->ClearListItems();
-
 	for (FOnlineSessionSearchResult Result : SessionResults)
 	{
 		FString SessionToken;
@@ -84,8 +77,6 @@ void UJoinList::OnFindSessions(const TArray<FOnlineSessionSearchResult>& Session
 	}
 	if (!bWasSuccessful || SessionResults.Num() == 0)
 	{
-		ValidateButton->SetIsEnabled(true);
-		ValidateButton->SetVisibility(ESlateVisibility::Hidden);
 		CodePromptBox->SetVisibility(ESlateVisibility::Visible);
 	}
 }
@@ -118,14 +109,8 @@ void UJoinList::OnStartSession(bool bWasSuccessful)
 {
 }
 
-void UJoinList::ValidateButtonClicked()
-{
-	
-}
-
 void UJoinList::SearchButtonClicked()
 {
-	ValidateButton->SetIsEnabled(false);
 	FString PromptSessionToken = CodePromptBox->GetText().ToString();
 	if (MultiplayerSessionsSubsystem)
 	{

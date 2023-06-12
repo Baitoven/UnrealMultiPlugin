@@ -18,5 +18,5 @@ bool UJoinListEntry::Initialize()
 
 void UJoinListEntry::JoinButtonClicked()
 {
-	// TODO
+	// Implemented in Blueprints
 }
